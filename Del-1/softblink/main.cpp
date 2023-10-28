@@ -2,7 +2,7 @@
  * softblink.cpp
  *
  * Created: 25.10.2023 11:28:25
- * Author : hakka
+ * Author : Truls Kolstad
  */ 
 
 #include <avr/io.h>
