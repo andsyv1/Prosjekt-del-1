@@ -9,10 +9,9 @@
 #include <util/delay.h>
 
 void ADC_Init() {
-
-	ADMUX = (1 << REFS0); 
-	ADCSRA = (1 << ADEN) | (1 << ADPS2) | (1 << ADPS1); 
-	DDRD |= (1 << PD6);
+    ADMUX = (1 << REFS0) | (1 << REFS1); // Setter AREF som referansespenningskilde
+    ADCSRA = (1 << ADEN) | (1 << ADPS2) | (1 << ADPS1); 
+    DDRD |= (1 << PD6);
 }
 
 uint16_t ADC_Read() {
