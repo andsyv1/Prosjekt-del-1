@@ -8,35 +8,43 @@
 #include <avr/io.h>
 #include <util/delay.h>
 
-#define LED_PIN PD6
+// Definerer pin som LED er koplet til
+#define ledPin PD6
+// Tid for delay til å styre dimmeperioden, brukes i funksjon som tar inn double.
+// Øk for tregere blinking, mink for raskere blink.
+const double delayTime = 10;
 
-void init_PWM() {
-	// Set PD6/OC0A as an output pin. 
-	DDRD |= (1 << LED_PIN);
+void pwmInit() {
+	// Konfigurer PD6/OC0A som en utgang.
+	DDRD |= (1 << ledPin);
 
-	// Set the Timer/Counter Control Register 0 to Fast PWM mode with non-inverted output
+	// Konfigurer Timer/Counter Control Register 0A til
+	// Fast PWM mode med ikke-invertert utgang.
 	TCCR0A = (1 << WGM01) | (1 << WGM00) | (1 << COM0A1);
 	
-	// No prescaler, running at full speed
+	// Ingen prescaler, full fart @ 3.9kHz
 	TCCR0B = (1 << CS00); 
 	
-	// Set the initial PWM duty cycle (brightness)
-	OCR0A = 128;  // Adjust this value for desired brightness
+	// Startverdi sendt til OCR0A komparator
+	OCR0A = 128;  
 }
 
 int main(void) {
-	init_PWM();
+	// Initsialiserer pwm på mikrokontrolleren
+	pwmInit();
 
 	while (1) {
-		// Soft blink by changing the PWM duty cycle
+		// Løkke som stegvis øker lysstyrken.
+		// Tid mellom hver økning styres av delay funksjonen.
 		for (int brightness = 0; brightness <= 255; brightness++) {
 			OCR0A = brightness;
-			_delay_ms(1);  // Adjust this delay for the soft blink speed
+			_delay_ms(delayTime); 
 		}
-
+		
+		// Løkke som stegvis minker lysstyrken
 		for (int brightness = 255; brightness >= 0; brightness--) {
 			OCR0A = brightness;
-			_delay_ms(1);  // Adjust this delay for the soft blink speed
+			_delay_ms(delayTime); 
 		}
 	}
 
