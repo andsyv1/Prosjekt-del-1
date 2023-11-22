@@ -31,12 +31,12 @@ int main(void) {
 		// Soft blink by changing the PWM duty cycle
 		for (int brightness = 0; brightness <= 255; brightness++) {
 			OCR0A = brightness;
-			_delay_ms(10);  // Adjust this delay for the soft blink speed
+			_delay_ms(1);  // Adjust this delay for the soft blink speed
 		}
 
 		for (int brightness = 255; brightness >= 0; brightness--) {
 			OCR0A = brightness;
-			_delay_ms(10);  // Adjust this delay for the soft blink speed
+			_delay_ms(1);  // Adjust this delay for the soft blink speed
 		}
 	}
 

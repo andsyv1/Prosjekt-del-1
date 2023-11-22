@@ -21,11 +21,11 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, READONLY, DEBUGGING
   8 .debug_frame  00000034  00000000  00000000  000012d8  2**2
                   CONTENTS, READONLY, DEBUGGING
-  9 .debug_str    0000042c  00000000  00000000  0000130c  2**0
+  9 .debug_str    000003db  00000000  00000000  0000130c  2**0
                   CONTENTS, READONLY, DEBUGGING
- 10 .debug_loc    000000b0  00000000  00000000  00001738  2**0
+ 10 .debug_loc    000000b0  00000000  00000000  000016e7  2**0
                   CONTENTS, READONLY, DEBUGGING
- 11 .debug_ranges 00000018  00000000  00000000  000017e8  2**0
+ 11 .debug_ranges 00000018  00000000  00000000  00001797  2**0
                   CONTENTS, READONLY, DEBUGGING
 
 Disassembly of section .text:
@@ -76,20 +76,22 @@ Disassembly of section .text:
 #define LED_PIN PD6
 
 void init_PWM() {
-	// Set PD6 (OC0A) as an output
+	// Set PD6/OC0A as an output pin. 
 	DDRD |= (1 << LED_PIN);
   80:	8a b1       	in	r24, 0x0a	; 10
   82:	80 64       	ori	r24, 0x40	; 64
   84:	8a b9       	out	0x0a, r24	; 10
 
-	// Set the Timer/Counter 0 to Fast PWM mode with non-inverted output
+	// Set the Timer/Counter Control Register 0 to Fast PWM mode with non-inverted output
 	TCCR0A = (1 << WGM01) | (1 << WGM00) | (1 << COM0A1);
   86:	83 e8       	ldi	r24, 0x83	; 131
   88:	84 bd       	out	0x24, r24	; 36
-	TCCR0B = (1 << CS00);  // No prescaler, running at full speed
+	
+	// No prescaler, running at full speed
+	TCCR0B = (1 << CS00); 
   8a:	81 e0       	ldi	r24, 0x01	; 1
   8c:	85 bd       	out	0x25, r24	; 37
-
+	
 	// Set the initial PWM duty cycle (brightness)
 	OCR0A = 128;  // Adjust this value for desired brightness
   8e:	80 e8       	ldi	r24, 0x80	; 128
@@ -120,8 +122,8 @@ int main(void) {
 	#endif
 
 	__builtin_avr_delay_cycles(__ticks_dc);
-  a6:	e3 ec       	ldi	r30, 0xC3	; 195
-  a8:	f9 e0       	ldi	r31, 0x09	; 9
+  a6:	e9 ef       	ldi	r30, 0xF9	; 249
+  a8:	f0 e0       	ldi	r31, 0x00	; 0
   aa:	31 97       	sbiw	r30, 0x01	; 1
   ac:	f1 f7       	brne	.-4      	; 0xaa <main+0x16>
   ae:	00 c0       	rjmp	.+0      	; 0xb0 <main+0x1c>
@@ -137,7 +139,7 @@ int main(void) {
   b6:	8f ef       	ldi	r24, 0xFF	; 255
   b8:	90 e0       	ldi	r25, 0x00	; 0
 			OCR0A = brightness;
-			_delay_ms(10);  // Adjust this delay for the soft blink speed
+			_delay_ms(1);  // Adjust this delay for the soft blink speed
 		}
 
 		for (int brightness = 255; brightness >= 0; brightness--) {
@@ -145,15 +147,15 @@ int main(void) {
   bc:	6c f3       	brlt	.-38     	; 0x98 <main+0x4>
 			OCR0A = brightness;
   be:	87 bd       	out	0x27, r24	; 39
-  c0:	e3 ec       	ldi	r30, 0xC3	; 195
-  c2:	f9 e0       	ldi	r31, 0x09	; 9
+  c0:	e9 ef       	ldi	r30, 0xF9	; 249
+  c2:	f0 e0       	ldi	r31, 0x00	; 0
   c4:	31 97       	sbiw	r30, 0x01	; 1
   c6:	f1 f7       	brne	.-4      	; 0xc4 <main+0x30>
   c8:	00 c0       	rjmp	.+0      	; 0xca <main+0x36>
   ca:	00 00       	nop
 		for (int brightness = 0; brightness <= 255; brightness++) {
 			OCR0A = brightness;
-			_delay_ms(10);  // Adjust this delay for the soft blink speed
+			_delay_ms(1);  // Adjust this delay for the soft blink speed
 		}
 
 		for (int brightness = 255; brightness >= 0; brightness--) {
